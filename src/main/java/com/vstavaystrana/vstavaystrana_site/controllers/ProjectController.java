@@ -13,23 +13,23 @@ import java.util.List;
 @Controller
 public class ProjectController {
     @Autowired
-    public ProjectController(ProjectService personService) {
-        this.personService = personService;
+    public ProjectController(ProjectService projectService) {
+        this.projectService = projectService;
     }
 
-    ProjectService personService;
+    ProjectService projectService;
 
     @GetMapping("/")
     public String getMain(Model model) {
-        List<Project> project = personService.getAllProjects();
+        List<Project> project = projectService.getAllProjects();
         model.addAttribute("project", project);
-        model.addAttribute("new_person", new Project());
+        model.addAttribute("new_project", new Project());
         return "index";
     }
 
     @PostMapping("/project/add")
-    public String savePerson(@ModelAttribute("new_person") Project project) {
-        personService.saveProject(project);
+    public String savePerson(@ModelAttribute("new_project") Project project) {
+        projectService.saveProject(project);
         return "redirect:/";
     }
 }

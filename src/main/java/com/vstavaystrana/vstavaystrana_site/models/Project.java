@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "persons")
+@Table(name = "projects")
 public class Project extends AbstractEntity{
     public Project(byte doc_scan,
                    String name,
