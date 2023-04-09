@@ -1,4 +1,4 @@
-package com.vstavaystrana.vstavaystrana_site.configs;
+package com.vstavaystrana.vstavaystrana_site.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
