@@ -2,5 +2,5 @@ package com.vstavaystrana.vstavaystrana_site.models;
 
 public interface DatabaseEntity
 {
-    Integer getId();
+    Long getId();
 }

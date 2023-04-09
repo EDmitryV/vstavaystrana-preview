@@ -5,7 +5,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "persons")
-public class Project {
+public class Project extends AbstractEntity{
     public Project(byte doc_scan,
                    String name,
                    String description,
@@ -38,9 +38,9 @@ public class Project {
 
     public Project(){}
 
-    @Id
+    /*@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;*/
     private byte doc_scan;
     private String name;
     private String description;

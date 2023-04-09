@@ -9,10 +9,10 @@ public class AbstractEntity implements DatabaseEntity
 {
         @Id
         @GeneratedValue
-        protected Integer id;
+        protected Long id;
 
         @Override
-        public Integer getId()
+        public Long getId()
         {
             return id;
         }

@@ -10,10 +10,10 @@ import java.util.Set;
 
 @Entity
 @Table(name="user_extras")
-public class User {
-    @Id
+public class User extends AbstractEntity{
+    /*@Id
     @GeneratedValue
-    private Long id;
+    private Long id;*/
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name="user_id"))
@@ -31,15 +31,6 @@ public class User {
     private LocalDate birthDate;
 
     public User(){}
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
 
     public String getUsername() {
         return username;
