@@ -11,6 +11,10 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    //Вкл-выкл требования к регистрации. false - только для разработки
+    private final boolean enabled = false;
+
     @Bean
     public PasswordEncoder passwordEncoder()
     {
@@ -19,16 +23,21 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests()
-                .requestMatchers("/login", "/registration").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .permitAll()
-                .and()
-                .logout()
-                .permitAll();
+        if(enabled) {
+            http
+                    .authorizeHttpRequests()
+                    .requestMatchers("/login", "/registration").permitAll()
+                    .anyRequest().authenticated()
+                    .and()
+                    .formLogin()
+                    .permitAll()
+                    .and()
+                    .logout()
+                    .permitAll();
+        }
+        else{
+            http.authorizeHttpRequests().requestMatchers("/**").permitAll();
+        }
         return http.build();
     }
 
