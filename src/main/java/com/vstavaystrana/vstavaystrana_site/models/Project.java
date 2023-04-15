@@ -41,6 +41,9 @@ public class Project extends AbstractEntity{
     /*@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;*/
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    private Buisnessman author;
     private byte doc_scan;
     private String name;
     private String description;
