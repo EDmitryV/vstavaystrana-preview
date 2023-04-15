@@ -4,8 +4,10 @@ import com.vstavaystrana.vstavaystrana_site.models.Role;
 import com.vstavaystrana.vstavaystrana_site.models.User;
 import com.vstavaystrana.vstavaystrana_site.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -39,6 +41,14 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+
+    public User findUserByUsername(String username) throws Exception{
+        User userFromDB = userRepository.findByUsername(username);
+        if(userFromDB == null){
+            throw new Exception("User is not Exists");
+        }
+        return userFromDB;
+    }
 
 
     @Override
