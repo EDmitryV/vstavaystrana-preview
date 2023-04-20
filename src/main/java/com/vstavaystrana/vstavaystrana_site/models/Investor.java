@@ -7,7 +7,7 @@ import jakarta.persistence.OneToOne;
 
 @Entity
 public class Investor extends AbstractEntity{
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
     private Boolean activity_allowed;

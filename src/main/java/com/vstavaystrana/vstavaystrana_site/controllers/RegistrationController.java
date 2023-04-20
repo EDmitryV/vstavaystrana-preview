@@ -10,39 +10,25 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import javax.validation.Valid;
 
 @Controller
 public class RegistrationController {
 
-    private final UserService userService;
-
     @Autowired
-    public RegistrationController(UserService userService){
-        this.userService = userService;
-    }
-
+    private UserService userService;
 
     @GetMapping("/registration")
-    public String registration(Model model)
-    {
-        model.addAttribute("user", new User());
+    public String registration(Model model) {
+        model.addAttribute("userForm", new User());
+
         return "registration";
     }
+
     @PostMapping("/registration")
-    public String adduser(@ModelAttribute("user") User userForm, BindingResult bindingResult, Model model)
-    {
-//        try
-//        {
-//            userService.addUser(user);
-//            return "redirect:/login";
-//        }
-//        catch (Exception ex)
-//        {
-//            model.addAttribute("message", "User exists");
-//            return "registration";
-//        }
+    public String addUser(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, Model model) {
+
         if (bindingResult.hasErrors()) {
-            model.addAttribute("message", bindingResult.getAllErrors());
             return "registration";
         }
         if (!userForm.getPassword().equals(userForm.getPasswordConfirm())){
@@ -54,7 +40,6 @@ public class RegistrationController {
             return "registration";
         }
 
-        return "redirect:/";
+        return "redirect:/home";
     }
-
 }

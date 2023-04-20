@@ -1,31 +1,34 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">\
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
-    <title>Spring Security Example </title>
+    <meta charset="utf-8">
+    <title>Регистрация</title>
 </head>
-<body>
-<div th:if="${message}">
-    <div th:text="${message}"></div>
-</div>
-<form th:action="@{/registration}" method="post" th:object="${user}">
-    <div><label> Логин: <input type="text" name="username" th:filed="*{username}"/> </label></div>
 
-    <div><label> Имя: <input type="text" name="name" th:filed="*{name}"/> </label>
-        <div th:if="${usernameError}">
-            <div th:text="${usernameError}"></div>
-        </div></div>
-    <div><label> Фамилия: <input type="text" name="surname" th:filed="*{surname}"/> </label></div>
-    <br>
-    <div><label> Password: <input type="password" name="password" th:filed="*{password}"/> </label></div>
-    <div>
-        <input type="password" th:field="*{passwordConfirm}"
-               placeholder="Повторите пароль">
-        <div th:if="${passwordError}">
-            <div th:text="${passwordError}"></div>
+<body>
+<div>
+    <form th:action="@{/registration}" method="post" th:object="${userForm}">
+        <h2>Регистрация</h2>
+        <div>
+            <input type="text" th:field="*{username}" placeholder="Логин"
+                   autofocus="true"></input>
+            <div th:if = "${usernameError}">
+                <p>[[${usernameError}]]</p>
+            </div>
         </div>
-    </div>
-    <div><input type="submit" value="Зарегистрироваться"/></div>
-</form>
+        <div>
+            <input type="password" th:field="*{password}" placeholder="Пароль"></input>
+        </div>
+        <div>
+            <input type="password" th:field="*{passwordConfirm}"
+                   placeholder="Повторите пароль"></input>
+            <div th:if="${passwordError}">
+                <p>[[${passwordError}]]</p>
+            </div>
+        </div>
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+    <a href="/main">Главная</a>
+</div>
 </body>
 </html>

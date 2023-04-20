@@ -22,7 +22,11 @@ public class BusinessmanService {
     }
 
     public Businessman findBusinessmanByUser(User user){
-        return businessmanRepository.findByUser(user).get(0);
+        try {
+            return businessmanRepository.findByUser(user).get(0);
+        }catch (RuntimeException e){
+            return null;
+        }
     }
 
     public void saveBusinessman(Businessman businessman){

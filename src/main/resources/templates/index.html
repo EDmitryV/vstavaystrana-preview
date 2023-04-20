@@ -7,7 +7,7 @@
 <body>
 <div>
     <h3>Ваш текущий аккаунт</h3>
-    <p>Аккаунт: [[${user}]]</p>
+    <p>Аккаунт: [[${user.username}]]</p>
     <form th:action="@{/logout}" method="post">
         <input type="submit" value="Sign Out"/>
     </form>
