@@ -10,15 +10,17 @@ import java.util.List;
 @Service
 public class ProjectService {
     @Autowired
-    public ProjectService(ProjectRepository projectRepo){
+    public ProjectService(ProjectRepository projectRepo) {
         this.projectRepo = projectRepo;
     }
+
     private ProjectRepository projectRepo;
+
     public void saveProject(Project project) {
         projectRepo.save(project);
     }
 
-    public List<Project> getAllProjects(){
+    public List<Project> getAllProjects() {
         return projectRepo.findAll();
     }
 }
