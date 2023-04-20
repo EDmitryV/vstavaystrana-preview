@@ -8,7 +8,7 @@ public class InvestmentService {
     private final InvestmentRepository investRepository;
 
     @Autowired
-    public InvestmentService(InvestmentRepository repo){
+    public InvestmentService(InvestmentRepository repo) {
         this.investRepository = repo;
     }
 }

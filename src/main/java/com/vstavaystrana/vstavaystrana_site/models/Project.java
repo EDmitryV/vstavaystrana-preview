@@ -43,7 +43,7 @@ public class Project extends AbstractEntity{
     private Long id;*/
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
-    private Buisnessman author;
+    private Businessman author;
     private byte doc_scan;
     private String name;
     private String description;
@@ -72,11 +72,11 @@ public class Project extends AbstractEntity{
     private int support;
 
     // todo add news line connection
-    @Column(name="date_of_com")
-
-    public Long getId() {
-        return id;
-    }
+//    @Column(name="date_of_com")
+//
+//    public Long getId() {
+//        return id;
+//    }
 
     public byte getDoc_scan() {
         return doc_scan;

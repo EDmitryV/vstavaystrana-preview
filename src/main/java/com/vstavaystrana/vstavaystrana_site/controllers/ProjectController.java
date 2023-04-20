@@ -17,14 +17,14 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    ProjectService projectService;
+    private final ProjectService projectService;
 
-    @GetMapping("/")
-    public String getMain(Model model) {
-        List<Project> project = projectService.getAllProjects();
-        model.addAttribute("project", project);
-        model.addAttribute("new_project", new Project());
-        return "index";
+    @GetMapping("/projects")
+    public String getProjects(Model model) {
+        List<Project> projects = projectService.getAllProjects();
+        model.addAttribute("projects", projects);
+//        model.addAttribute("new_project", new Project());
+        return "projects";
     }
 
     @PostMapping("/project/add")

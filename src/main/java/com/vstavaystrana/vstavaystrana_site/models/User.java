@@ -1,7 +1,6 @@
 package com.vstavaystrana.vstavaystrana_site.models;
 
 
-import jakarta.mail.search.SearchTerm;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -20,6 +19,8 @@ public class User extends AbstractEntity{
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<Role>();
 
+    @Transient
+    private String passwordConfirm;
     private String username;
     private String name;
     private String surname;
@@ -30,7 +31,17 @@ public class User extends AbstractEntity{
     private String passportNumber;
     private LocalDate birthDate;
 
+
+
     public User(){}
+
+    public String getPasswordConfirm() {
+        return passwordConfirm;
+    }
+
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
+    }
 
     public String getUsername() {
         return username;

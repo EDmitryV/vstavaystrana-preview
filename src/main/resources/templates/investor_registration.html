@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Страница регистрации как инвестор</title>
+</head>
+<body>
+<div>
+    <h3>Ваш текущий аккаунт</h3>
+    <p>Аккаунт: [[${user.username}]]</p>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
+</div>
+<div>
+    <h1>Страница регистрации как инвестор</h1>
+    <div th:switch="${investor}">
+        <div th:case = "null">
+            <h2>Форма регистрации</h2>
+            <form th:action="@{/investor/create}" th:object="${new_investor}" method="post">
+                <input type="checkbox" id="accept_terms"/><label for="accept_terms">Пользователь ознакомился и принимает <a href="#">правила соглашения о ведении инвестиционной деятельности</a></label>
+                <button type="submit">Подать заявку</button>
+            </form>
+        </div>
+        <div th:case = "*">
+            <h2>Вы уже зарегистрированы как инвестор</h2>
+            <p th:if="${investor.activity_allowed} eq 'false'">Ваша заявка на рассмотрении</p>
+        </div>
+    </div>
+</div>
+<a th:href="@{/}">Вернуться на главную</a>
+</body>
+</html>

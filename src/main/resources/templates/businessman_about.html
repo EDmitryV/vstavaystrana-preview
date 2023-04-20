@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Информация о [[${businessman.user.surname}]]е [[${businessman.user.name}]]е</title>
+</head>
+<body>
+<div>
+    <h3>Ваш текущий аккаунт</h3>
+    <p>Аккаунт: [[${user.username}]]</p>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
+</div>
+<div>
+    <h1>Информация о [[${businessman.user.surname}]]е [[${businessman.user.name}]]е</h1>
+    <p>ФИО: [[${businessman.user.surname}]] [[${businessman.user.name}]] [[${businessman.user.patronymic}]]</p>
+    <p>Дата рождения: [[${businessman.user.birthDate}]]</p>
+    <div th:switch="businessman.have_completed_project">
+        <p th:case="true">Имеет [[${businessman.readiness}]] завершенных проектов</p>
+        <p th:case="false">Не имеет завершенных проектов</p>
+    </div>
+    <p>Банковские реквизиты: [[${businessman.bank_requisites}]]</p>
+</div>
+<a th:href="@{/}">Вернуться на главную</a>
+</body>
+</html>

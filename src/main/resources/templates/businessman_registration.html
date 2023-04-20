@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Страница регистрации как предприниматель</title>
+</head>
+<body>
+<div>
+    <h3>Ваш текущий аккаунт</h3>
+    <p>Аккаунт: [[${user.username}]]</p>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
+</div>
+<div>
+    <h1>Страница регистрации как предприниматель</h1>
+    <form th:action="@{/businessman/create}" th:object="${new_businessman}" method="post">
+<!--        <input type="file" accept=".png, .jpg, .jpeg" th:field="*{passport_scan}" placeholder="Скан паспорта"/>-->
+        <input type="text" th:field="*{bank_requisites}" placeholder="Банковские реквизиты"/>
+        <input type="text" th:field="*{info}" placeholder="Дополнительная информация о предпринимателе"/>
+        <input type="checkbox" id="accept_terms"/><label for="accept_terms">Пользователь ознакомился и принимает <a href="#">правила соглашения о ведении предпринимательской деятельности</a></label>
+        <button type="submit">Сохранить</button>
+    </form>
+</div>
+<a th:href="@{/}">Вернуться на главную</a>
+</body>
+</html>
