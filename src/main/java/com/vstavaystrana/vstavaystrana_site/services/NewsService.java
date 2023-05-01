@@ -10,7 +10,7 @@ public class NewsService {
     private final NewsRepository newsRepository;
 
     @Autowired
-    public NewsService(NewsRepository repo){
+    public NewsService(NewsRepository repo) {
         this.newsRepository = repo;
     }
 

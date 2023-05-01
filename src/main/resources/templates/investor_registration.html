@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Страница регистрации как инвестор</title>
+</head>
+<body>
+<div>
+    <h3>Ваш текущий аккаунт</h3>
+    <p>Аккаунт: [[${user.username}]]</p>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
+</div>
+<div>
+    <h1>Страница регистрации как инвестор</h1>
+        <div th:unless="${investor}">
+            <h2>Форма регистрации</h2>
+            <form th:action="@{/investor/create}" th:object="${new_investor}" method="post">
+                <input type="checkbox" id="accept_terms"/><label for="accept_terms">Пользователь ознакомился и принимает
+                <a
+                        href="#">правила соглашения о ведении инвестиционной деятельности</a></label>
+                <button type="submit">Подать заявку</button>
+            </form>
+        </div>
+        <div th:if="${investor}">
+            <h2>Вы уже зарегистрированы как инвестор</h2>
+            <p th:unless="${investor.activity_allowed}">Ваша заявка на рассмотрении</p>
+        </div>
+</div>
+<a th:href="@{/}">Вернуться на главную</a>
+</body>
+</html>
