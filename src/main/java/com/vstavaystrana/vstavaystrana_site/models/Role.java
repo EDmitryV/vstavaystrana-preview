@@ -8,6 +8,21 @@ import java.util.Set;
 @Entity
 @Table(name="t_role")
 public class Role implements GrantedAuthority {
+
+    public enum Roles{
+        ROLE_USER(1),
+        ROLE_ADMIN(2),
+        ROLE_INVESTOR(3),
+        ROLE_BUSINESSMAN(4);
+
+        private int nameId;
+        Roles(int id) {
+            nameId = id;
+        }
+
+        public int getId(){return nameId;}
+    }
+
     @Id
     private Long id;
     private String name;
