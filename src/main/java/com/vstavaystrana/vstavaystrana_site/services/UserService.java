@@ -92,15 +92,7 @@ public class UserService implements UserDetailsService {
     }
 
     private void assignRole(User user, Role role){
-        switch (Role.Names.valueOf(role.getName())){
-            case ROLE_BUSINESSMAN:
-                user.addRole(role);
-                userRepository.save(user);
-                break;
-
-            case ROLE_INVESTOR:
-                break;
-            default:
-        }
+        user.addRole(role);
+        userRepository.save(user);
     }
 }
