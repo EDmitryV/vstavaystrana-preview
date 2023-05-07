@@ -155,4 +155,8 @@ public class User implements UserDetails {
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
+
+    public void addRole(Role role){
+        roles.add(role);
+    }
 }
