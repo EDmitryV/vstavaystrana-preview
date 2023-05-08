@@ -1,8 +1,10 @@
 package com.vstavaystrana.vstavaystrana_site.services;
 
 //import com.vstavaystrana.vstavaystrana_site.models.Role;
+import com.vstavaystrana.vstavaystrana_site.models.Businessman;
 import com.vstavaystrana.vstavaystrana_site.models.Role;
 import com.vstavaystrana.vstavaystrana_site.models.User;
+import com.vstavaystrana.vstavaystrana_site.repositories.BusinessmanRepository;
 import com.vstavaystrana.vstavaystrana_site.repositories.RoleRepository;
 import com.vstavaystrana.vstavaystrana_site.repositories.UserRepository;
 import jakarta.persistence.EntityManager;
@@ -18,53 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-//@Component
-//public class UserService implements UserDetailsService {
-//
-//
-//    private final UserRepository userRepository;
-//
-//    @Autowired
-//    public UserService(UserRepository userRepository) {
-//        this.userRepository = userRepository;
-//    }
-//
-//    public void addUser(User user) throws Exception {
-//        User userFromDb = userRepository.findByUsername(user.getUsername());
-//        if (userFromDb != null) {
-//            throw new Exception("user exist");
-//        }
-//        user.setRoles(Collections.singleton(Role.USER));
-//        userRepository.save(user);
-//    }
-//
-//
-//    public User findUserByUsername(String username) throws Exception {
-//        User userFromDB = userRepository.findByUsername(username);
-//        if (userFromDB == null) {
-//            throw new Exception("User is not Exists");
-//        }
-//        return userFromDB;
-//    }
-//
-//
-//    @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        User myUser = userRepository.findByUsername(username);
-//        return new org.springframework.security.core.userdetails.User(
-//                myUser.getUsername(),
-//                myUser.getPassword(),
-//                mapRolesToAthorities(myUser.getRoles()));
-//
-//    }
-//
-//
-//    private List<? extends GrantedAuthority> mapRolesToAthorities(Set<Role> roles) {
-//        return roles.stream().map(r -> new SimpleGrantedAuthority("ROLE_" + r.name())).collect(Collectors.toList());
-//    }
-//
-//}
-
 @Service
 public class UserService implements UserDetailsService {
     @PersistenceContext
@@ -75,6 +30,9 @@ public class UserService implements UserDetailsService {
     RoleRepository roleRepo;
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    BusinessmanRepository businessmanRepository;
 
     public BCryptPasswordEncoder getbCryptPasswordEncoder(){
         return bCryptPasswordEncoder;
@@ -124,5 +82,17 @@ public class UserService implements UserDetailsService {
     public List<User> userGetList(Long startId) {
         return em.createQuery("SELECT u FROM User u WHERE u.id > :paramId", User.class)
                 .setParameter("paramId", startId).getResultList();
+    }
+
+
+    public void assignRole(User user, Role.Names roleName){
+        Role role = roleRepo.findByName(roleName.name());
+        if(role == null || user == null) return;
+        assignRole(user, role);
+    }
+
+    private void assignRole(User user, Role role){
+        user.addRole(role);
+        userRepository.save(user);
     }
 }

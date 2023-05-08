@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация проекта</title>
+</head>
+<body>
+<div>
+    <h3>Ваш текущий аккаунт</h3>
+    <p>Аккаунт: [[${user.username}]]</p>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
+</div>
+    <h1>Страница регистрации проекта</h1>
+    <div th:if="${author}">
+        <form th:action="@{/projects/create}" th:object="${new_project}" method="post">
+            <input type="text" th:field="*{name}" placeholder="Название проекта"/><br>
+            <p><textarea name="comment" th:field="*{description}"></textarea></p>
+            <button type="submit">Сохранить</button>
+        </form>
+    </div>
+    <div th:unless="${author}">
+        <h2>Вы не зарегистрированы как бизнесмен</h2>
+    </div>
+
+
+<a th:href="@{/}">Вернуться на главную</a>
+</body>
+</html>

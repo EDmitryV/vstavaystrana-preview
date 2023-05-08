@@ -8,12 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
+@RequestMapping(value = "/businessman")
 public class BusinessmanController {
     @Autowired
     public BusinessmanController(BusinessmanService service){
@@ -22,14 +20,14 @@ public class BusinessmanController {
 
     private final BusinessmanService businessmanService;
 
-    @GetMapping("/businessman/about/{businessman_id}")
+    @GetMapping("/about/{businessman_id}")
     public String getBusinessmanAbout(@AuthenticationPrincipal User user, Model model, @PathVariable Long businessman_id){
         Businessman businessman = businessmanService.findById(businessman_id);
         model.addAttribute("businessman", businessman);
         model.addAttribute("user", user);
         return "businessman_about";
     }
-    @GetMapping("/businessman/create")
+    @GetMapping("/create")
     public String getBusinessmanCreation(@AuthenticationPrincipal User user, Model model){
         model.addAttribute("user", user);
         var businessman = businessmanService.findBusinessmanByUser(user);
@@ -38,7 +36,7 @@ public class BusinessmanController {
         return "businessman_registration";
     }
 
-    @PostMapping("/businessman/create")
+    @PostMapping("/create")
     public String saveBusinessman(@ModelAttribute("new_businessman") Businessman businessman, @AuthenticationPrincipal User user){
         businessman.setUser(user);
         businessmanService.saveBusinessman(businessman);
