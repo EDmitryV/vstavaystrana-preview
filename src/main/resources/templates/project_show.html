@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Проекты</title>
+</head>
+<body>
+<div>
+  <h3>Ваш текущий аккаунт</h3>
+  <p>Аккаунт: [[${user.username}]]</p>
+  <form th:action="@{/logout}" method="post">
+    <input type="submit" value="Sign Out"/>
+  </form>
+
+<th:block th:each="project : ${projects}">
+    <div style="border:2px solid black;
+    padding: 10px 10px 10px 10px;
+    margin: 20px 20px 20px 20px;">
+    <a th:href="@{/projects/{project_id}/about(project_id=${project.id})}">[[${project.name}]]</a>
+    </div>
+</th:block>
+
+</div>
+<a th:href="@{/}">Вернуться на главную</a>
+</body>
+</html>

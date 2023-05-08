@@ -10,8 +10,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequestMapping(value = "/investor")
 public class InvestorController {
     @Autowired
     public InvestorController(InvestorService service){
@@ -20,7 +22,7 @@ public class InvestorController {
 
     private final InvestorService investorService;
 
-    @GetMapping("/investor/create")
+    @GetMapping("/create")
     public String getInvestorCreation(@AuthenticationPrincipal User user, Model model){
         model.addAttribute("user", user);
         var investor = investorService.findInvestorByUser(user);
@@ -29,7 +31,7 @@ public class InvestorController {
         return "investor_registration";
     }
 
-    @PostMapping("/investor/create")
+    @PostMapping("/create")
     public String saveInvestor(@ModelAttribute("new_investor") Investor investor, @AuthenticationPrincipal User user){
         investor.setUser(user);
         investorService.saveInvestor(investor);

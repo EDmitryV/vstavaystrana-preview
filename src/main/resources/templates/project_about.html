@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>[[${project.name}]]</title>
+</head>
+<body>
+    <div th:if="${project}">
+       <h3> Проект: [[${project.name}]]</h3>
+        <p>Описание:</p>
+        <p>[[${project.description}]]</p>
+    </div>
+    <div th:unless="${project}">
+        Такого проекта не существует
+    </div>
+</div>
+
+    <a th:href="@{/}">Вернуться на главную</a>
+</body>
+</html>

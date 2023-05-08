@@ -19,7 +19,7 @@ public class InitDataLoader implements ApplicationRunner {
     }
 
     public void run(ApplicationArguments args) {
-        for(Role.Roles roleName: Role.Roles.values())
+        for(Role.Names roleName: Role.Names.values())
         {
             if(!roleRepository.existsByName(roleName.name())){
                 roleRepository.save(
