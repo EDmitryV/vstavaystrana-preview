@@ -9,6 +9,7 @@ import java.util.Set;
 @Table(name="t_role")
 public class Role implements GrantedAuthority {
 
+
     public enum Names {
         ROLE_USER(1),
         ROLE_ADMIN(2),
@@ -16,6 +17,7 @@ public class Role implements GrantedAuthority {
         ROLE_BUSINESSMAN(4);
 
         private int nameId;
+
         Names(int id) {
             nameId = id;
         }
