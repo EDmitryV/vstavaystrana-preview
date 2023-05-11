@@ -1,10 +1,18 @@
 package com.vstavaystrana.vstavaystrana_site.bot;
 
+import com.vstavaystrana.vstavaystrana_site.models.Businessman;
+import com.vstavaystrana.vstavaystrana_site.models.News;
+import com.vstavaystrana.vstavaystrana_site.models.Project;
+import com.vstavaystrana.vstavaystrana_site.models.User;
+import com.vstavaystrana.vstavaystrana_site.repositories.NewsRepository;
+import com.vstavaystrana.vstavaystrana_site.repositories.ProjectRepository;
+import com.vstavaystrana.vstavaystrana_site.repositories.UserRepository;
+
+import com.vstavaystrana.vstavaystrana_site.services.BusinessmanService;
 import com.vstavaystrana.vstavaystrana_site.services.UserService;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -16,10 +24,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
@@ -28,14 +33,23 @@ public class TelegramBot extends TelegramLongPollingBot {
         USERNAME,
         PASSWORD,
         PROJECT,
-        NEWS_CONTENT
+        NEWS
     }
 
     @Autowired
-    private UserService userService;
+    UserRepository userRepository;
+    @Autowired
+    ProjectRepository projectRepository;
+    @Autowired
+    NewsRepository newsRepository;
+    @Autowired
+    UserService userService;
+    @Autowired
+    BusinessmanService businessmanService;
     private final String botUsername;
-    private Map<String, String> chatIdToDatabaseUsername = new HashMap<>();
     private Map<String, State> chatIdToState = new HashMap<>();
+    private Map<String, User> chatIdToUser = new HashMap<>();
+    private Map<String, Project> chatIdToProject = new HashMap<>();
 
     @Autowired
     public TelegramBot() throws TelegramApiException {
@@ -55,39 +69,83 @@ public class TelegramBot extends TelegramLongPollingBot {
             SendMessage message = new SendMessage();
             String chatId = update.getMessage().getChatId().toString();
             String userMessage = update.getMessage().getText();
-            String outMessage = "";
+            String outMessage;
 
             if (userMessage.equals("/start")
                     || userMessage.equals("Начать сначала")
                     || !chatIdToState.containsKey(chatId)) {
                 chatIdToState.put(chatId, State.START);
-                chatIdToDatabaseUsername.remove(chatId);
+                chatIdToUser.remove(chatId);
             }
 
             switch (chatIdToState.get(chatId)) {
-                case START -> {
+                case START:
                     outMessage = "Введите логин";
                     chatIdToState.put(chatId, State.USERNAME);
-                }
+                    break;
 
-                case USERNAME -> {
-                    try {
-                        System.out.println(userService.loadUserByUsername(userMessage));
-                    } catch (UsernameNotFoundException e)
-                    {
-                        outMessage = "Такого логина нет. Введите логин";
+                case USERNAME:
+                    User user = userRepository.findByUsername(userMessage);
+                    if (user == null)
+                        outMessage = "Пользователя с таким логином не существует. Введите пароль";
+                    else {
+                        outMessage = "Логин верный. Введите пароль";
+                        chatIdToUser.put(chatId, user);
+                        chatIdToState.put(chatId, State.PASSWORD);
+                    }
+                    break;
+
+                case PASSWORD:
+                    User userForPassword = chatIdToUser.get(chatId);
+                    var encoder = userService.getbCryptPasswordEncoder();
+                    if (userForPassword != null && encoder.matches(userMessage, userForPassword.getPassword())) {
+                        outMessage = "Пароль верный! Введите название проекта";
+                        chatIdToState.put(chatId, State.PROJECT);
+                        break;
+                    }
+                    if (userForPassword != null && !encoder.matches(userMessage, userForPassword.getPassword())) {
+                        outMessage = "Пароль неверный. Введите пароль";
                         break;
                     }
 
-                    outMessage = "Логин верный. Введите пароль";
-                    chatIdToState.put(chatId, State.PASSWORD);
-                }
+                case PROJECT:
+                    User userForBusinessman = chatIdToUser.get(chatId);
+                    if (userForBusinessman != null) {
+                        Businessman businessmen = businessmanService.findBusinessmanByUser(userForBusinessman);
+                        if (businessmen != null) {
+                            List<Project> userProjects = projectRepository.findAll();
+                            Optional<Project> userProject = userProjects
+                                    .stream()
+                                    .filter(project -> project.getName().equals(userMessage))
+                                    .findFirst();
+                            if (userProject.isEmpty()) {
+                                outMessage = "Нет проекта с таким именем. Введите название проекта";
+                                break;
+                            }
+                            outMessage = "Проект выбран. Введите текст новости";
+                            chatIdToProject.put(chatId, userProject.get());
+                            chatIdToState.put(chatId, State.NEWS);
+                            break;
+                        }
+                    }
 
+                case NEWS:
+                    Project project = chatIdToProject.get(chatId);
+                    if (project != null) {
+                        News news = new News();
+                        news.setContent(userMessage);
+                        news.setProject(project);
+                        newsRepository.save(news);
 
-                // в любой момент в chatIdToDatabaseUsername или chatIdToState может не оказаться нужной инфы
-                // Тогда: "возникла ошибка
-                default -> {
-                }
+                        outMessage = "Новость опубликована";
+                        chatIdToState.put(chatId, State.USERNAME);
+                        break;
+                    }
+
+                default:
+                    outMessage = "Возникла ошибка, начинаем сначала. Введите логин";
+                    chatIdToState.put(chatId, State.USERNAME);
+                    break;
             }
 
             setButtons(message);
