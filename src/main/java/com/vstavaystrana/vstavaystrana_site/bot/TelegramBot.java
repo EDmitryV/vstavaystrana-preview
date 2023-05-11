@@ -1,14 +1,20 @@
 package com.vstavaystrana.vstavaystrana_site.bot;
 
+import com.vstavaystrana.vstavaystrana_site.services.UserService;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,13 +31,22 @@ public class TelegramBot extends TelegramLongPollingBot {
         NEWS_CONTENT
     }
 
+    @Autowired
+    private UserService userService;
     private final String botUsername;
-    private State state = State.START;
     private Map<String, String> chatIdToDatabaseUsername = new HashMap<>();
+    private Map<String, State> chatIdToState = new HashMap<>();
 
-    public TelegramBot() {
+    @Autowired
+    public TelegramBot() throws TelegramApiException {
         super(Dotenv.load().get("BOT_TOKEN"));
         botUsername = Dotenv.load().get("BOT_NAME");
+        telegramBotsApi().registerBot(this);
+    }
+
+    @Bean
+    public TelegramBotsApi telegramBotsApi() throws TelegramApiException {
+        return new TelegramBotsApi(DefaultBotSession.class);
     }
 
     @Override
@@ -42,21 +57,35 @@ public class TelegramBot extends TelegramLongPollingBot {
             String userMessage = update.getMessage().getText();
             String outMessage = "";
 
-            if (userMessage.equals("/start")) {
-                state = State.START;
+            if (userMessage.equals("/start")
+                    || userMessage.equals("Начать сначала")
+                    || !chatIdToState.containsKey(chatId)) {
+                chatIdToState.put(chatId, State.START);
                 chatIdToDatabaseUsername.remove(chatId);
             }
 
-            switch (state) {
+            switch (chatIdToState.get(chatId)) {
                 case START -> {
                     outMessage = "Введите логин";
-                    state = State.USERNAME;
+                    chatIdToState.put(chatId, State.USERNAME);
                 }
 
                 case USERNAME -> {
-                    outMessage = "Введите пароль";
-                    state = State.PASSWORD;
+                    try {
+                        System.out.println(userService.loadUserByUsername(userMessage));
+                    } catch (UsernameNotFoundException e)
+                    {
+                        outMessage = "Такого логина нет. Введите логин";
+                        break;
+                    }
+
+                    outMessage = "Логин верный. Введите пароль";
+                    chatIdToState.put(chatId, State.PASSWORD);
                 }
+
+
+                // в любой момент в chatIdToDatabaseUsername или chatIdToState может не оказаться нужной инфы
+                // Тогда: "возникла ошибка
                 default -> {
                 }
             }
@@ -82,7 +111,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         List<KeyboardRow> keyboard = new ArrayList<>();
 
         KeyboardRow keyboardFirstRow = new KeyboardRow();
-        keyboardFirstRow.add(new KeyboardButton("/start"));
+        keyboardFirstRow.add(new KeyboardButton("Начать сначала"));
 
         keyboard.add(keyboardFirstRow);
         replyKeyboardMarkup.setKeyboard(keyboard);
