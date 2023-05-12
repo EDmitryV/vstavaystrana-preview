@@ -9,6 +9,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Controller
 @RequestMapping(value = "/businessman")
@@ -30,16 +33,36 @@ public class BusinessmanController {
     @GetMapping("/create")
     public String getBusinessmanCreation(@AuthenticationPrincipal User user, Model model){
         model.addAttribute("user", user);
-        var businessman = businessmanService.findBusinessmanByUser(user);
+        var businessmanId = businessmanService.findBusinessmanIdByUserId(user.getId());
+        Businessman businessman;
+        if(businessmanId != null){
+            businessman = businessmanService.findById(businessmanId);
+        }else {
+            businessman = null;
+        }
         model.addAttribute("businessman", businessman);
         model.addAttribute("new_businessman", new Businessman());
         return "businessman_registration";
     }
 
     @PostMapping("/create")
-    public String saveBusinessman(@ModelAttribute("new_businessman") Businessman businessman, @AuthenticationPrincipal User user){
+    public String postBusinessmanCreation(@AuthenticationPrincipal User user,
+                             @ModelAttribute("new_businessman") Businessman businessman,
+                             Model model,
+                             @RequestParam("imagefile") MultipartFile file) throws IOException {
+        Byte[] byteObjects = convertToBytes(file);
+        businessman.setAgreement(byteObjects);
         businessman.setUser(user);
+        businessman.setActivity_allowed(false);
         businessmanService.saveBusinessman(businessman);
         return "redirect:/";
+    }
+    private Byte[] convertToBytes(MultipartFile file) throws IOException {
+        Byte[] byteObjects = new Byte[file.getBytes().length];
+        int i = 0;
+        for (byte b : file.getBytes()) {
+            byteObjects[i++] = b;
+        }
+        return byteObjects;
     }
 }

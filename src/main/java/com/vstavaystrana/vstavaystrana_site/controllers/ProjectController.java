@@ -6,7 +6,6 @@ import com.vstavaystrana.vstavaystrana_site.models.User;
 import com.vstavaystrana.vstavaystrana_site.services.BusinessmanService;
 import com.vstavaystrana.vstavaystrana_site.services.ProjectService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,7 +26,7 @@ public class ProjectController {
     private final ProjectService projectService;
     private final BusinessmanService businessmanService;
 
-    @GetMapping("/{project_id}/about")
+    @GetMapping("/about/{project_id}")
     public String getProjectAbout(Model model, @PathVariable Long project_id){
         Project project = projectService.findById(project_id);
         model.addAttribute("project", project);
@@ -36,7 +35,8 @@ public class ProjectController {
 
     @GetMapping("/create")
     public String getProjectCreation(@AuthenticationPrincipal User user, Model model) {
-        Businessman author = businessmanService.findBusinessmanByUser(user);
+        var businessmanId = businessmanService.findBusinessmanIdByUserId(user.getId());
+        Businessman author = businessmanService.findById(businessmanId);
         //if(author == null) return "projects";
 
         model.addAttribute("user", user);
@@ -48,12 +48,13 @@ public class ProjectController {
     @PostMapping("/create")
     public String saveProject(@ModelAttribute("new_project") Project project, @AuthenticationPrincipal User user) {
         projectService.saveProject(project);
-        return String.format("redirect:/projects/%s/about", project.getId());
+        return String.format("redirect:/projects/about/%s", project.getId());
     }
 
     @GetMapping("/my")
     public String getUsersProjects(@AuthenticationPrincipal User user, Model model){
-        Businessman author = businessmanService.findBusinessmanByUser(user);
+        var businessmanId = businessmanService.findBusinessmanIdByUserId(user.getId());
+        Businessman author = businessmanService.findById(businessmanId);
         List<Project> projs = projectService.findByAuthor(author);
 
         model.addAttribute("user", user);

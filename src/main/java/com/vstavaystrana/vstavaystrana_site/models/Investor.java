@@ -1,16 +1,24 @@
 package com.vstavaystrana.vstavaystrana_site.models;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 
 @Entity
 public class Investor extends AbstractEntity{
     @OneToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+//    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
     private Boolean activity_allowed;
+
+    @Lob
+    private Byte[] agreement;
+
+    public Byte[] getAgreement() {
+        return agreement;
+    }
+
+    public void setAgreement(Byte[] agreement) {
+        this.agreement = agreement;
+    }
 
     public User getUser() {
         return user;

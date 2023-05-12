@@ -17,7 +17,7 @@
     <div style="border:2px solid black;
     padding: 10px 10px 10px 10px;
     margin: 20px 20px 20px 20px;">
-    <a th:href="@{/projects/{project_id}/about(project_id=${project.id})}">[[${project.name}]]</a>
+    <a th:href="@{/projects/about/{project_id}(project_id=${project.id})}">[[${project.name}]]</a>
     </div>
 </th:block>
 

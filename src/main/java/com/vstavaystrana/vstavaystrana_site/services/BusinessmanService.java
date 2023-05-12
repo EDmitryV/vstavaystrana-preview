@@ -25,12 +25,8 @@ public class BusinessmanService {
         this.userService = userService;
     }
 
-    public Businessman findBusinessmanByUser(User user){
-        try {
-            return businessmanRepository.findByUser(user).get(0);
-        }catch (RuntimeException e){
-            return null;
-        }
+    public Long findBusinessmanIdByUserId(Long id){
+            return businessmanRepository.findIdByUserId(id);
     }
 
     public void saveBusinessman(Businessman businessman){

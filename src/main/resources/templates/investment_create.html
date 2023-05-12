@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Страница оформления инвестиции</title>
+</head>
+<body>
+<div>
+    <h3>Ваш текущий аккаунт</h3>
+    <p>Аккаунт: [[${user.username}]]</p>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
+</div>
+<div>
+    <h1>Страница оформления инвестиции</h1>
+    <div>
+        <h2>Инвестиция в проект: [[${project.name}}]]</h2>
+        <form th:action="@{/investment/create}" th:object="${new_investment}" method="post">
+            <input type="number" th:field="${new_investment.sum}" placeholder="Сумма инвестиции">
+            <button type="submit">Оформить</button>
+        </form>
+    </div>
+</div>
+<a th:href="@{/}">Вернуться на главную</a>
+</body>
+</html>

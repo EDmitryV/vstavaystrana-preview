@@ -17,6 +17,15 @@ public class Businessman extends AbstractEntity
     private Integer bank_requisites;
     private String info;
     private Boolean activity_allowed;
+    private Byte[] agreement;
+
+    public Byte[] getAgreement() {
+        return agreement;
+    }
+
+    public void setAgreement(Byte[] agreement) {
+        this.agreement = agreement;
+    }
 
     public User getUser() {
         return user;

@@ -14,11 +14,12 @@
 <div>
     <h1>Страница регистрации как предприниматель</h1>
     <div th:unless="${businessman}">
-        <form th:action="@{/businessman/create}" th:object="${new_businessman}" method="post">
+        <form th:action="@{/businessman/create}" th:object="${new_businessman}" method="post" enctype="multipart/form-data">
             <!--        <input type="file" accept=".png, .jpg, .jpeg" th:field="*{passport_scan}" placeholder="Скан паспорта"/>-->
             <input type="text" th:field="*{bank_requisites}" placeholder="Банковские реквизиты"/>
             <input type="text" th:field="*{info}" placeholder="Дополнительная информация о предпринимателе"/>
             <input type="checkbox" id="accept_terms"/><label for="accept_terms">Пользователь ознакомился и принимает <a href="#">правила соглашения о ведении предпринимательской деятельности</a></label>
+            <input type="file" th:name="imagefile">
             <button type="submit">Сохранить</button>
         </form>
     </div>

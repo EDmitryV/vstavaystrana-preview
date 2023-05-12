@@ -13,19 +13,21 @@
 </div>
 <div>
     <h1>Страница регистрации как инвестор</h1>
-        <div th:unless="${investor}">
-            <h2>Форма регистрации</h2>
-            <form th:action="@{/investor/create}" th:object="${new_investor}" method="post">
-                <input type="checkbox" id="accept_terms"/><label for="accept_terms">Пользователь ознакомился и принимает
-                <a
-                        href="#">правила соглашения о ведении инвестиционной деятельности</a></label>
-                <button type="submit">Подать заявку</button>
-            </form>
-        </div>
-        <div th:if="${investor}">
-            <h2>Вы уже зарегистрированы как инвестор</h2>
-            <p th:unless="${investor.activity_allowed}">Ваша заявка на рассмотрении</p>
-        </div>
+    <div th:unless="${investor}">
+        <h2>Форма регистрации</h2>
+        <form th:action="@{/investor/create}" th:object="${new_investor}" method="post" enctype="multipart/form-data">
+            <p><input type="checkbox" id="accept_terms"/>
+                <label for="accept_terms">Пользователь ознакомился и принимает
+                    <a href="#">правила соглашения о ведении инвестиционной деятельности</a>
+                </label></p>
+                <input type="file" th:name="imagefile">
+            <button type="submit">Подать заявку</button>
+        </form>
+    </div>
+    <div th:if="${investor}">
+        <h2>Вы уже зарегистрированы как инвестор</h2>
+        <p th:unless="${investor.activity_allowed}">Ваша заявка на рассмотрении</p>
+    </div>
 </div>
 <a th:href="@{/}">Вернуться на главную</a>
 </body>
