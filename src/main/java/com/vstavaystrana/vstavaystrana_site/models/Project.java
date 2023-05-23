@@ -189,4 +189,12 @@ public class Project extends AbstractEntity{
     public void setSupport(int support) {
         this.support = support;
     }
+
+    public Businessman getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Businessman author) {
+        this.author = author;
+    }
 }
