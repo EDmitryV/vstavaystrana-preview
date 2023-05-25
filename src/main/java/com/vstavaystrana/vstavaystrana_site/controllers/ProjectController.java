@@ -8,6 +8,8 @@ import com.vstavaystrana.vstavaystrana_site.services.BusinessmanService;
 import com.vstavaystrana.vstavaystrana_site.services.NewsService;
 import com.vstavaystrana.vstavaystrana_site.services.ProjectService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
+import org.springframework.security.core.parameters.P;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -51,6 +53,7 @@ public class ProjectController {
         newsService.saveNews(news);
         return  String.format("redirect:/projects/%s/about", project.getId());
     }
+  
     @GetMapping("/create")
     public String getProjectCreation(@AuthenticationPrincipal User user, Model model) {
         Businessman author = businessmanService.findBusinessmanByUser(user);
@@ -91,7 +94,5 @@ public class ProjectController {
         model.addAttribute("projects", projs);
         return "project_show";
     }
-
-
 
 }
