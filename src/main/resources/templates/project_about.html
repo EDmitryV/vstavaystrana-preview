@@ -14,10 +14,12 @@
     <div th:unless="${project}">
         Такого проекта не существует
     </div>
+    <div th:type="hidden" ></div>
 
     <hr>
     <p>Создать новость:</p>
-    <form th:action="@{/projects/news/add}" th:object="${new_news}" method="post">
+    <form th:action="@{/projects/news/add(projectId=${project.id})}" th:object="${new_news}" method="post">
+
         <p><textarea name="content" th:field="*{content}"></textarea></p>
         <button type="submit">Добавить</button>
     </form>
@@ -29,9 +31,9 @@
     margin: 20px 20px 20px 20px;">
 
             <a th:href="@{/projects/{project_id}/about(project_id=${project.id})}">[[${project.name}]]</a>
-            <p>От: [[${news.author}}]]</p>
-            <p>[[${news.publishedOn}}]]</p>
-            <p>[[${news.content}}]]</p>
+            <p>От: [[${news.author}]]</p>
+            <p>[[${news.publishedOn}]]</p>
+            <p>[[${news.content}]]</p>
         </div>
     </th:block>
 </div>

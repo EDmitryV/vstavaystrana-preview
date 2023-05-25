@@ -35,16 +35,17 @@ public class ProjectController {
         Project project = projectService.findById(project_id);
         model.addAttribute("project", project);
         List<News> news = newsService.findByProject(project);
-        model.addAttribute("newsList", news);
+        model.addAttribute("news_list", news);
         model.addAttribute("new_news", new News());
         return "project_about";
     }
 
     @PostMapping("/news/add")
     public String addNewsCreate(Model model,
-                                @ModelAttribute("project")Project project,
+                                @RequestParam Long projectId,
                                 @ModelAttribute("new_news")News news,
                                 @AuthenticationPrincipal User user){
+        Project project = projectService.findById(projectId);
         news.setAuthor(user.getUsername());
         news.setProject(project);
         newsService.saveNews(news);
@@ -62,7 +63,10 @@ public class ProjectController {
     }
 
     @PostMapping("/create")
-    public String saveProject(@ModelAttribute("new_project") Project project, @AuthenticationPrincipal User user) {
+    public String saveProject(@ModelAttribute("new_project") Project project,
+                              @AuthenticationPrincipal User user) {
+        Businessman author = businessmanService.findBusinessmanByUser(user);
+        project.setAuthor(author);
         projectService.saveProject(project);
         return String.format("redirect:/projects/%s/about", project.getId());
     }
