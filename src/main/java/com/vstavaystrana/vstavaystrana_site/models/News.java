@@ -1,9 +1,8 @@
 package com.vstavaystrana.vstavaystrana_site.models;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 public class News extends AbstractEntity
@@ -16,6 +15,9 @@ public class News extends AbstractEntity
     private String content;
     private String photoUrl;
     private String videoUrl;
+
+    @Column(name = "published_on")
+    private LocalDateTime publishedOn;
 
     public Project getProject() {
         return project;
@@ -55,5 +57,13 @@ public class News extends AbstractEntity
 
     public void setVideoUrl(String videoUrl) {
         this.videoUrl = videoUrl;
+    }
+
+    public LocalDateTime getPublishedOn() {
+        return publishedOn;
+    }
+
+    public void setPublishedOn(LocalDateTime publishedOn) {
+        this.publishedOn = publishedOn;
     }
 }
