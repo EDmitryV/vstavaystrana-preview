@@ -9,6 +9,7 @@ import com.vstavaystrana.vstavaystrana_site.repositories.ProjectRepository;
 import com.vstavaystrana.vstavaystrana_site.repositories.UserRepository;
 
 import com.vstavaystrana.vstavaystrana_site.services.BusinessmanService;
+import com.vstavaystrana.vstavaystrana_site.services.NewsService;
 import com.vstavaystrana.vstavaystrana_site.services.UserService;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Autowired
     ProjectRepository projectRepository;
     @Autowired
-    NewsRepository newsRepository;
+    NewsService newsService;
     @Autowired
     UserService userService;
     @Autowired
@@ -78,74 +79,81 @@ public class TelegramBot extends TelegramLongPollingBot {
                 chatIdToUser.remove(chatId);
             }
 
-            switch (chatIdToState.get(chatId)) {
-                case START:
-                    outMessage = "Введите логин";
-                    chatIdToState.put(chatId, State.USERNAME);
-                    break;
-
-                case USERNAME:
-                    User user = userRepository.findByUsername(userMessage);
-                    if (user == null)
-                        outMessage = "Пользователя с таким логином не существует. Введите пароль";
-                    else {
-                        outMessage = "Логин верный. Введите пароль";
-                        chatIdToUser.put(chatId, user);
-                        chatIdToState.put(chatId, State.PASSWORD);
-                    }
-                    break;
-
-                case PASSWORD:
-                    User userForPassword = chatIdToUser.get(chatId);
-                    var encoder = userService.getbCryptPasswordEncoder();
-                    if (userForPassword != null && encoder.matches(userMessage, userForPassword.getPassword())) {
-                        outMessage = "Пароль верный! Введите название проекта";
-                        chatIdToState.put(chatId, State.PROJECT);
-                        break;
-                    }
-                    if (userForPassword != null && !encoder.matches(userMessage, userForPassword.getPassword())) {
-                        outMessage = "Пароль неверный. Введите пароль";
-                        break;
-                    }
-
-                case PROJECT:
-                    User userForBusinessman = chatIdToUser.get(chatId);
-                    if (userForBusinessman != null) {
-                        Businessman businessmen = businessmanService.findBusinessmanByUser(userForBusinessman);
-                        if (businessmen != null) {
-                            List<Project> userProjects = projectRepository.findAll();
-                            Optional<Project> userProject = userProjects
-                                    .stream()
-                                    .filter(project -> project.getName().equals(userMessage))
-                                    .findFirst();
-                            if (userProject.isEmpty()) {
-                                outMessage = "Нет проекта с таким именем. Введите название проекта";
-                                break;
-                            }
-                            outMessage = "Проект выбран. Введите текст новости";
-                            chatIdToProject.put(chatId, userProject.get());
-                            chatIdToState.put(chatId, State.NEWS);
-                            break;
-                        }
-                    }
-
-                case NEWS:
-                    Project project = chatIdToProject.get(chatId);
-                    if (project != null) {
-                        News news = new News();
-                        news.setContent(userMessage);
-                        news.setProject(project);
-                        newsRepository.save(news);
-
-                        outMessage = "Новость опубликована";
+            try {
+                switch (chatIdToState.get(chatId)) {
+                    case START:
+                        outMessage = "Введите логин";
                         chatIdToState.put(chatId, State.USERNAME);
                         break;
-                    }
 
-                default:
-                    outMessage = "Возникла ошибка, начинаем сначала. Введите логин";
-                    chatIdToState.put(chatId, State.USERNAME);
-                    break;
+                    case USERNAME:
+                        User user = userRepository.findByUsername(userMessage);
+                        if (user == null)
+                            outMessage = "Пользователя с таким логином не существует. Введите пароль";
+                        else {
+                            outMessage = "Логин верный. Введите пароль";
+                            chatIdToUser.put(chatId, user);
+                            chatIdToState.put(chatId, State.PASSWORD);
+                        }
+                        break;
+
+                    case PASSWORD:
+                        User userForPassword = chatIdToUser.get(chatId);
+                        var encoder = userService.getbCryptPasswordEncoder();
+                        if (userForPassword != null && encoder.matches(userMessage, userForPassword.getPassword())) {
+                            outMessage = "Пароль верный! Введите название проекта";
+                            chatIdToState.put(chatId, State.PROJECT);
+                            break;
+                        }
+                        if (userForPassword != null && !encoder.matches(userMessage, userForPassword.getPassword())) {
+                            outMessage = "Пароль неверный. Введите пароль";
+                            break;
+                        }
+
+                    case PROJECT:
+                        User userForBusinessman = chatIdToUser.get(chatId);
+                        if (userForBusinessman != null) {
+                            Businessman businessmen = businessmanService.findBusinessmanByUser(userForBusinessman);
+                            if (businessmen != null) {
+                                List<Project> userProjects = projectRepository.findAll();
+                                Optional<Project> userProject = userProjects
+                                        .stream()
+                                        .filter(project -> project.getName().equals(userMessage))
+                                        .findFirst();
+                                if (userProject.isEmpty()) {
+                                    outMessage = "Нет проекта с таким именем. Введите название проекта";
+                                    break;
+                                }
+                                outMessage = "Проект выбран. Введите текст новости";
+                                chatIdToProject.put(chatId, userProject.get());
+                                chatIdToState.put(chatId, State.NEWS);
+                                break;
+                            }
+                        }
+
+                    case NEWS:
+                        Project project = chatIdToProject.get(chatId);
+                        if (project != null) {
+                            News news = new News();
+                            news.setContent(userMessage);
+                            news.setProject(project);
+                            newsService.saveNews(news);
+
+                            outMessage = "Новость опубликована";
+                            chatIdToState.put(chatId, State.USERNAME);
+                            break;
+                        }
+
+                    default:
+                        outMessage = "Возникла ошибка, начинаем сначала. Введите логин";
+                        chatIdToState.put(chatId, State.USERNAME);
+                        break;
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                outMessage = "Возникла ошибка, начинаем сначала. Введите логин";
+                chatIdToState.put(chatId, State.USERNAME);
             }
 
             setButtons(message);
