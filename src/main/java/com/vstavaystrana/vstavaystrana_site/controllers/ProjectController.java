@@ -1,11 +1,14 @@
 package com.vstavaystrana.vstavaystrana_site.controllers;
 
 import com.vstavaystrana.vstavaystrana_site.models.Businessman;
+import com.vstavaystrana.vstavaystrana_site.models.News;
 import com.vstavaystrana.vstavaystrana_site.models.Project;
 import com.vstavaystrana.vstavaystrana_site.models.User;
 import com.vstavaystrana.vstavaystrana_site.services.BusinessmanService;
+import com.vstavaystrana.vstavaystrana_site.services.NewsService;
 import com.vstavaystrana.vstavaystrana_site.services.ProjectService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import org.springframework.security.core.parameters.P;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,21 +22,38 @@ import java.util.List;
 @RequestMapping(value = "/projects")
 public class ProjectController {
     @Autowired
-    public ProjectController(ProjectService projectService, BusinessmanService businessmanService) {
+    public ProjectController(ProjectService projectService, BusinessmanService businessmanService, NewsService newsService) {
         this.projectService = projectService;
         this.businessmanService = businessmanService;
+        this.newsService = newsService;
     }
 
     private final ProjectService projectService;
     private final BusinessmanService businessmanService;
+    private final NewsService newsService;
 
     @GetMapping("/{project_id}/about")
     public String getProjectAbout(Model model, @PathVariable Long project_id){
         Project project = projectService.findById(project_id);
         model.addAttribute("project", project);
+        List<News> news = newsService.findByProject(project);
+        model.addAttribute("news_list", news);
+        model.addAttribute("new_news", new News());
         return "project_about";
     }
 
+    @PostMapping("/news/add")
+    public String addNewsCreate(Model model,
+                                @RequestParam Long projectId,
+                                @ModelAttribute("new_news")News news,
+                                @AuthenticationPrincipal User user){
+        Project project = projectService.findById(projectId);
+        news.setAuthor(user.getUsername());
+        news.setProject(project);
+        newsService.saveNews(news);
+        return  String.format("redirect:/projects/%s/about", project.getId());
+    }
+  
     @GetMapping("/create")
     public String getProjectCreation(@AuthenticationPrincipal User user, Model model) {
         Businessman author = businessmanService.findBusinessmanByUser(user);
@@ -46,7 +66,10 @@ public class ProjectController {
     }
 
     @PostMapping("/create")
-    public String saveProject(@ModelAttribute("new_project") Project project, @AuthenticationPrincipal User user) {
+    public String saveProject(@ModelAttribute("new_project") Project project,
+                              @AuthenticationPrincipal User user) {
+        Businessman author = businessmanService.findBusinessmanByUser(user);
+        project.setAuthor(author);
         projectService.saveProject(project);
         return String.format("redirect:/projects/%s/about", project.getId());
     }
