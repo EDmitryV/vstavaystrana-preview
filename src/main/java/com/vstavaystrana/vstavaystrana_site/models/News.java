@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class News extends AbstractEntity
 {
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "project_id", referencedColumnName = "id")
     private Project project;
     private String author;
