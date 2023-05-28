@@ -17,6 +17,7 @@
         <form th:action="@{/projects/create}" th:object="${new_project}" method="post">
             <input type="text" th:field="*{name}" placeholder="Название проекта"/><br>
             <p><textarea name="comment" th:field="*{description}"></textarea></p>
+            <input type="number" th:field="*{funds_required}" placeholder="Размер необходимого финансирования"/><br>
             <button type="submit">Сохранить</button>
         </form>
     </div>

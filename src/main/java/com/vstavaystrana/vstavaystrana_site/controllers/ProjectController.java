@@ -1,12 +1,10 @@
 package com.vstavaystrana.vstavaystrana_site.controllers;
 
-import com.vstavaystrana.vstavaystrana_site.models.Businessman;
-import com.vstavaystrana.vstavaystrana_site.models.News;
-import com.vstavaystrana.vstavaystrana_site.models.Project;
-import com.vstavaystrana.vstavaystrana_site.models.User;
+import com.vstavaystrana.vstavaystrana_site.models.*;
 import com.vstavaystrana.vstavaystrana_site.services.BusinessmanService;
 import com.vstavaystrana.vstavaystrana_site.services.NewsService;
 import com.vstavaystrana.vstavaystrana_site.services.ProjectService;
+import com.vstavaystrana.vstavaystrana_site.services.RoleService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import org.springframework.security.core.parameters.P;
@@ -16,44 +14,63 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 
 @Controller
 @RequestMapping(value = "/projects")
 public class ProjectController {
     @Autowired
-    public ProjectController(ProjectService projectService, BusinessmanService businessmanService, NewsService newsService) {
+    public ProjectController(ProjectService projectService, BusinessmanService businessmanService, NewsService newsService, RoleService roleService) {
         this.projectService = projectService;
         this.businessmanService = businessmanService;
         this.newsService = newsService;
+        this.roleService = roleService;
     }
 
     private final ProjectService projectService;
     private final BusinessmanService businessmanService;
     private final NewsService newsService;
+    private final RoleService roleService;
 
     @GetMapping("/{project_id}/about")
-    public String getProjectAbout(Model model, @PathVariable Long project_id){
+    public String getProjectAbout(Model model, @AuthenticationPrincipal User user, @PathVariable Long project_id) {
         Project project = projectService.findById(project_id);
         model.addAttribute("project", project);
         List<News> news = newsService.findByProject(project);
         model.addAttribute("news_list", news);
         model.addAttribute("new_news", new News());
+        model.addAttribute("user", user);
+        boolean investor = false;
+        boolean author = false;
+        if (user != null) {
+            author = user.getId().equals(project.getAuthor().getUser().getId());
+            Set<Role> roles = user.getRoles();
+            for (Role role : roles) {
+                if (role.getName().equals("ROLE_INVESTOR")) {
+                    investor = true;
+                    break;
+                }
+            }
+        }
+        model.addAttribute("author", author);
+        model.addAttribute("investor", investor);
         return "project_about";
     }
 
     @PostMapping("/news/add")
     public String addNewsCreate(Model model,
                                 @RequestParam Long projectId,
-                                @ModelAttribute("new_news")News news,
-                                @AuthenticationPrincipal User user){
+                                @ModelAttribute("new_news") News news,
+                                @AuthenticationPrincipal User user) {
         Project project = projectService.findById(projectId);
         news.setAuthor(user.getUsername());
         news.setProject(project);
         newsService.saveNews(news);
-        return  String.format("redirect:/projects/%s/about", project.getId());
+        return String.format("redirect:/projects/%s/about", project.getId());
     }
-  
+
     @GetMapping("/create")
     public String getProjectCreation(@AuthenticationPrincipal User user, Model model) {
         Businessman author = businessmanService.findBusinessmanByUser(user);
@@ -75,7 +92,7 @@ public class ProjectController {
     }
 
     @GetMapping("/my")
-    public String getUsersProjects(@AuthenticationPrincipal User user, Model model){
+    public String getUsersProjects(@AuthenticationPrincipal User user, Model model) {
         Businessman author = businessmanService.findBusinessmanByUser(user);
         List<Project> projs = projectService.findByAuthor(author);
 
@@ -87,7 +104,7 @@ public class ProjectController {
     }
 
     @GetMapping("")
-    public String getAllProjects(@AuthenticationPrincipal User user, Model model){
+    public String getAllProjects(@AuthenticationPrincipal User user, Model model) {
         List<Project> projs = projectService.getAllProjects();
 
         model.addAttribute("user", user);

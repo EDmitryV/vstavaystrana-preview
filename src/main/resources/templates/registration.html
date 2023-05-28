@@ -26,6 +26,18 @@
                 <p>[[${passwordError}]]</p>
             </div>
         </div>
+        <div>
+            <input type="text" th:field="*{name}"
+                   placeholder="Имя"/>
+            <input type="text" th:field="*{surname}"
+                   placeholder="Фамилия"/>
+            <input type="text" th:field="*{patronymic}"
+                   placeholder="Отчество"/>
+        </div>
+        <div>
+            <label for="date">Дата рождения:</label>
+            <input type="date" id="date" name="birthDate" th:value="${birthDate}" />
+        </div>
         <button type="submit">Зарегистрироваться</button>
     </form>
     <a href="/main">Главная</a>

@@ -15,11 +15,11 @@ public class Investment extends AbstractEntity{
     private LocalDate date;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "project_id", referencedColumnName = "id")
     private Project project;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "investor_id", referencedColumnName = "id")
     private User investor;
 

@@ -6,38 +6,60 @@
     <title>[[${project.name}]]</title>
 </head>
 <body>
-    <div th:if="${project}">
-       <h3> Проект: [[${project.name}]]</h3>
-        <p>Описание:</p>
-        <p>[[${project.description}]]</p>
+<div th:if="${user == null}">
+    <a href="/login">Войти</a>
+</div>
+<div th:if="${user != null}">
+    <p>Ваш текущий аккаунт</p>
+    <p>Аккаунт: [[${user.username}]]</p>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
+</div>
+<div th:if="${project}">
+    <h3> Проект: [[${project.name}]]</h3>
+    <div th:if="${investor}">
+        <a th:href="@{/investment/create/{project_id}(project_id=${project.id})}">Инвестировать в проект</a>
+        <a href="/investment/my">Мои инвестиции</a>
     </div>
-    <div th:unless="${project}">
-        Такого проекта не существует
-    </div>
-    <div th:type="hidden" ></div>
+    <p>Всего собрано средств:            [[${project.funds_raised}]]</p>
+    <p>Из них инвестировано автором:     [[${project.funds_by_author}]]</p>
+    <p>Всего необходимо собрать средств: [[${project.funds_required}]]</p>
+    <p>Описание:</p>
+    <p>[[${project.description}]]</p>
+</div>
+<div th:unless="${project}">
+    Такого проекта не существует
+</div>
+<div th:type="hidden"></div>
 
-    <hr>
+<hr>
+<div>
+    <a th:href="@{/businessman/about/{id}(id=${project.author.id})}">Об авторе проекта</a>
+</div>
+<div th:if="${author}">
     <p>Создать новость:</p>
     <form th:action="@{/projects/news/add(projectId=${project.id})}" th:object="${new_news}" method="post">
 
         <p><textarea name="content" th:field="*{content}"></textarea></p>
         <button type="submit">Добавить</button>
     </form>
-    <hr>
+</div>
+<hr>
 
-    <th:block th:each="news : ${news_list}">
-        <div style="border:2px solid black;
+<th:block th:each="news : ${news_list}">
+    <div style="border:2px solid black;
     padding: 10px 10px 10px 10px;
     margin: 20px 20px 20px 20px;">
 
-            <a th:href="@{/projects/{project_id}/about(project_id=${project.id})}">[[${project.name}]]</a>
-            <p>От: [[${news.author}]]</p>
-            <p>[[${news.publishedOn}]]</p>
-            <p>[[${news.content}]]</p>
-        </div>
-    </th:block>
+        <a th:href="@{/projects/{project_id}/about(project_id=${project.id})}">[[${project.name}]]</a>
+        <p>От: [[${news.author}]]</p>
+        <p>[[${news.publishedOn}]]</p>
+        <p>[[${news.content}]]</p>
+    </div>
+</th:block>
 </div>
 
-    <a th:href="@{/}">Вернуться на главную</a>
+<a th:href="@{/}">Вернуться на главную</a>
 </body>
 </html>

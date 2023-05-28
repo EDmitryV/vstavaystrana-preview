@@ -27,14 +27,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/registration").permitAll()
-                        .anyRequest().hasRole("USER")
+                        .requestMatchers("/businessman/create", "/investor/create", "/projects/news/add","/projects/create", "/projects/my", "/investment/create", "/investment/create/**", "/investment/my").hasRole("USER")
+                        .anyRequest().permitAll()
                 )
                 .formLogin((form) -> form
                         .loginPage("/login")
                         .permitAll()
                 )
-                .logout((logout) -> logout.permitAll());
+                .logout((logout) -> logout.permitAll().logoutSuccessUrl("/home"));
 
         return http.build();
     }

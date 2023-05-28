@@ -4,8 +4,11 @@
     <title>Информация о [[${businessman.user.surname}]]е [[${businessman.user.name}]]е</title>
 </head>
 <body>
-<div>
-    <h3>Ваш текущий аккаунт</h3>
+<div th:if="${user == null}">
+    <a href="/login">Войти</a>
+</div>
+<div th:if="${user != null}">
+    <p>Ваш текущий аккаунт</p>
     <p>Аккаунт: [[${user.username}]]</p>
     <form th:action="@{/logout}" method="post">
         <input type="submit" value="Sign Out"/>

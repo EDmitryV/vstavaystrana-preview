@@ -5,8 +5,11 @@
     <title>Карта сайта</title>
 </head>
 <body>
-<div>
-    <h3>Ваш текущий аккаунт</h3>
+<div th:if="${user == null}">
+    <a href="/login">Войти</a>
+</div>
+<div th:if="${user != null}">
+    <p>Ваш текущий аккаунт</p>
     <p>Аккаунт: [[${user.username}]]</p>
     <form th:action="@{/logout}" method="post">
         <input type="submit" value="Sign Out"/>
@@ -15,11 +18,9 @@
 <div>
     <h1>Карта сайта</h1>
     <a th:href="@{/projects}">Проекты</a>
+    <br><a th:href="@{/projects/create}">Создать проект</a>
     <a th:href="@{/investor/create}">Заполнить заявку на инвестора</a>
     <a th:href="@{/businessman/create}">Заполнить заявку на бизнесмена</a>
-    <a th:href="@{/businessman/about/1}">О первом зарегистрированном бизнесмене</a>
-
-    <br><a th:href="@{/projects/create}">Создать проект</a>
 </div>
 </body>
 </html>
