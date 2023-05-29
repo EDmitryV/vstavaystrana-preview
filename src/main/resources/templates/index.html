@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Карта сайта</title>
+</head>
+<body>
+<div th:if="${user == null}">
+    <a href="/login">Войти</a>
+</div>
+<div th:if="${user != null}">
+    <p>Ваш текущий аккаунт</p>
+    <p>Аккаунт: [[${user.username}]]</p>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
+</div>
+<div>
+    <h1>Карта сайта</h1>
+    <a th:href="@{/projects}">Проекты</a>
+    <br><a th:href="@{/projects/create}">Создать проект</a>
+    <a th:href="@{/investor/create}">Заполнить заявку на инвестора</a>
+    <a th:href="@{/businessman/create}">Заполнить заявку на бизнесмена</a>
+</div>
+</body>
+</html>
