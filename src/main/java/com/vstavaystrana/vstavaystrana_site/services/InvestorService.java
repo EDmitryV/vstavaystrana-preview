@@ -31,6 +31,6 @@ public class InvestorService {
 
     public void saveInvestor(Investor investor) {
         investorRepository.save(investor);
-        userService.assignRole(investor.getUser(), Role.Names.ROLE_INVESTOR);
+//        userService.assignRole(investor.getUser(), Role.Names.ROLE_INVESTOR);
     }
 }

@@ -18,7 +18,7 @@
             <form th:action="@{/investor/create}" th:object="${new_investor}" method="post">
                 <input type="checkbox" id="accept_terms"/><label for="accept_terms">Пользователь ознакомился и принимает
                 <a
-                        href="#">правила соглашения о ведении инвестиционной деятельности</a></label>
+                        href="/agreement">правила соглашения о ведении инвестиционной деятельности</a></label>
                 <button type="submit">Подать заявку</button>
             </form>
         </div>

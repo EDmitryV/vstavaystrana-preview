@@ -1,10 +1,7 @@
 package com.vstavaystrana.vstavaystrana_site.controllers;
 
 import com.vstavaystrana.vstavaystrana_site.models.*;
-import com.vstavaystrana.vstavaystrana_site.services.BusinessmanService;
-import com.vstavaystrana.vstavaystrana_site.services.NewsService;
-import com.vstavaystrana.vstavaystrana_site.services.ProjectService;
-import com.vstavaystrana.vstavaystrana_site.services.RoleService;
+import com.vstavaystrana.vstavaystrana_site.services.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import org.springframework.security.core.parameters.P;
@@ -22,15 +19,17 @@ import java.util.Set;
 @RequestMapping(value = "/projects")
 public class ProjectController {
     @Autowired
-    public ProjectController(ProjectService projectService, BusinessmanService businessmanService, NewsService newsService, RoleService roleService) {
+    public ProjectController(ProjectService projectService, InvestorService investorService, BusinessmanService businessmanService, NewsService newsService, RoleService roleService) {
         this.projectService = projectService;
         this.businessmanService = businessmanService;
         this.newsService = newsService;
         this.roleService = roleService;
+        this.investorService = investorService;
     }
 
     private final ProjectService projectService;
     private final BusinessmanService businessmanService;
+    private final InvestorService investorService;
     private final NewsService newsService;
     private final RoleService roleService;
 
@@ -46,12 +45,9 @@ public class ProjectController {
         boolean author = false;
         if (user != null) {
             author = user.getId().equals(project.getAuthor().getUser().getId());
-            Set<Role> roles = user.getRoles();
-            for (Role role : roles) {
-                if (role.getName().equals("ROLE_INVESTOR")) {
-                    investor = true;
-                    break;
-                }
+            Investor investor_obj = investorService.findInvestorByUser(user);
+            if (investor_obj != null) {
+                investor = true;
             }
         }
         model.addAttribute("author", author);

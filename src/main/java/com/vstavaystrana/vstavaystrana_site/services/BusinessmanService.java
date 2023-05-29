@@ -35,7 +35,7 @@ public class BusinessmanService {
 
     public void saveBusinessman(Businessman businessman){
         businessmanRepository.save(businessman);
-        userService.assignRole(businessman.getUser(), Role.Names.ROLE_BUSINESSMAN);
+//        userService.assignRole(businessman.getUser(), Role.Names.ROLE_BUSINESSMAN);
     }
 
     public Businessman findById(Long id){

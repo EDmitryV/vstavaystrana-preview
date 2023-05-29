@@ -12,9 +12,9 @@ public class Role implements GrantedAuthority {
 
     public enum Names {
         ROLE_USER(1),
-        ROLE_ADMIN(2),
-        ROLE_INVESTOR(3),
-        ROLE_BUSINESSMAN(4);
+        ROLE_ADMIN(2);
+//        ROLE_INVESTOR(3),
+//        ROLE_BUSINESSMAN(4);
 
         private int nameId;
 

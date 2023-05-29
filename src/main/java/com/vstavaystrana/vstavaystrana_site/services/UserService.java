@@ -85,14 +85,14 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public void assignRole(User user, Role.Names roleName){
-        Role role = roleRepo.findByName(roleName.name());
-        if(role == null || user == null) return;
-        assignRole(user, role);
-    }
-
-    private void assignRole(User user, Role role){
-        user.addRole(role);
-        userRepository.save(user);
-    }
+//    public void assignRole(User user, Role.Names roleName){
+//        Role role = roleRepo.findByName(roleName.name());
+//        if(role == null || user == null) return;
+//        assignRole(user, role);
+//    }
+//
+//    private void assignRole(User user, Role role){
+//        user.addRole(role);
+//        userRepository.save(user);
+//    }
 }
